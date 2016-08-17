@@ -10,11 +10,17 @@ import {
 gulp.task('webdriverUpdate', webdriver_update);
 gulp.task('webdriver', webdriver);
 
-gulp.task('protractor', ['prod', 'webdriverUpdate', 'webdriver'], function(cb) {
+gulp.task('protractor', ['webdriverUpdate', 'webdriver'], function(cb) {
 
   const testFiles = gulp.src('test/e2e/**/*.js');
+  testFiles.pipe(protractor({
+      configFile: config.test.protractor
+  })).on('error', (err) => {
+    // Make sure failed tests cause gulp to exit non-zero
+    throw err;
+  })
 
-  testServer({
+  /*testServer({
     port: config.testPort,
     dir: config.buildDir
   }).then((server) => {
@@ -24,6 +30,6 @@ gulp.task('protractor', ['prod', 'webdriverUpdate', 'webdriver'], function(cb) {
       // Make sure failed tests cause gulp to exit non-zero
       throw err;
     }).on('end', () => server.close(cb));
-  });
+  });*/
 
 });
